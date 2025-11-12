@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "hello-world": {
+      "command": "python",
+      "args": ["src/servers/hello_world/server.py"],
+      "cwd": "/path/to/dnd_MPC"
+    }
+  }
+}
