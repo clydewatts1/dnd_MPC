@@ -5,7 +5,6 @@ It will throw different types of dice and return the results to the client.
 """
 
 import asyncio
-import json
 
 # --- Start of path modification ---
 import sys
@@ -27,9 +26,9 @@ from mcp.types import (
     INTERNAL_ERROR, # noqa: F401
 )
 from pydantic import AnyUrl
-import random
 
 from src.servers.DnD_dice import tools
+from src.servers.DnD_dice.dice_roller import roll_dice_notation
 
 # Create server instance
 server = Server("Dungeons & Dragons DICE MCP Server")
@@ -52,14 +51,22 @@ async def handle_call_tool(name: str, arguments: dict) -> tuple[list[dict], dict
     if tools.get_tool(name) is None:
         raise ValueError(f"Unknown tool: {name}")
 
-    # TODO: Implement actual dice rolling logic based on arguments['notation']
-    # For now, we'll use the incoming arguments and a dummy result that matches
-    # the tool's outputSchema defined in tools.py.
+    # Get the dice notation from arguments
+    notation = arguments.get("notation")
+    if not notation:
+        raise ValueError("Missing required argument: notation")
+    
+    # Roll the dice using the actual dice rolling logic
+    try:
+        total, details = roll_dice_notation(notation)
+    except ValueError as e:
+        raise ValueError(f"Invalid dice notation: {e}")
+    
     result = {
         "rollId": arguments.get("rollId"),
-        "notation": arguments.get("notation"),
-        "result": "11",  # Dummy result
-        "rolledAt": datetime.datetime.utcnow().isoformat() + "Z",
+        "notation": notation,
+        "result": str(total),
+        "rolledAt": datetime.datetime.now(datetime.UTC).isoformat(),
     }
 
     # Return a text content message for humans AND a structured output dict
@@ -67,7 +74,7 @@ async def handle_call_tool(name: str, arguments: dict) -> tuple[list[dict], dict
     contents: list[dict] = [
         {
             "type": "text",
-            "text": f"Rolled {result['notation']} → {result['result']} (rollId={result['rollId']}).",
+            "text": f"Rolled {result['notation']} → {result['result']} (rollId={result['rollId']})\nDetails: {details}",
         }
     ]
 
