@@ -1,28 +1,69 @@
-## Dungeon and Dragons DICE Roller MCP Server
+# D&D Dice Roller MCP Server
 
-The following dices are catered for
+A Model Context Protocol (MCP) server for simulating dice rolls in Dungeons & Dragons games.
 
-- D4
-- D6
-- D8
-- D10
-- D12
-- D20
+## Overview
+
+This server provides dice rolling functionality with support for standard D&D dice notation, including complex expressions with multiple dice types and modifiers.
+
+## Supported Dice
+
+- **D4** - 4-sided die (tetrahedron)
+- **D6** - 6-sided die (cube)
+- **D8** - 8-sided die (octahedron)
+- **D10** - 10-sided die (pentagonal trapezohedron)
+- **D12** - 12-sided die (dodecahedron)
+- **D20** - 20-sided die (icosahedron)
+
+## Features
+
+### Dice Notation Support
+
+The server supports standard D&D dice notation:
+
+- Simple rolls: `1d20`, `2d6`, `3d8`
+- Modifiers: `1d20+5`, `2d6-2`, `3d8+3`
+- Multiple dice types: `2d6 + 1d4`, `1d20 + 2d6 + 3`
+- Complex expressions: `2d3 + 1d6 + 3`
 
 ### MCP Tools
 
 #### Throw Dice
 
-name: Throw Dice
-description: Throw one or more multi sided dices , and return the result of each throw.
-inputs:
-    mcp_type : string
-    action : role_dice
-    rollid : <unique identifier for role> 
-    notation : 2d3 + 1d6 + 3
-    reason : <reason for throwing dice>
+Simulates throwing dice and returns the result.
 
+**Input Schema:**
+```json
 {
+  "mcp_type": "dice_event",
+  "mcp_return_format": "json",
+  "action": "roll_dice",
+  "rollId": "unique-identifier",
+  "notation": "2d6+3",
+  "reason": "Attack roll"
+}
+```
+
+**Parameters:**
+- `mcp_type` (required): Type of MCP event
+- `mcp_return_format` (optional): Return format - "json" or "toon" (default: "toon")
+- `action` (required): Action to perform (e.g., "roll_dice")
+- `rollId` (required): Unique identifier for the roll
+- `notation` (required): Dice notation (e.g., "2d6+3", "1d20", "2d3 + 1d6")
+- `reason` (optional): Reason for the roll
+
+**Output Schema:**
+```json
+{
+  "rollId": "unique-identifier",
+  "notation": "2d6+3",
+  "result": "11",
+  "rolledAt": "2025-11-17T10:30:00Z"
+}
+```
+
+**Example:**
+```json
   "mcp_type": "dice_event",
   "action": "roll_dice",
   "rollId": "player_damage_roll_123",
