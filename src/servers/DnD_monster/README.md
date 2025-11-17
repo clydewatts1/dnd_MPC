@@ -59,6 +59,12 @@ Each monster includes:
 python -m src.servers.DnD_monster.server
 ```
 
+### Testing with MCP Inspector
+
+```bash
+npx @modelcontextprotocol/inspector python -m src.servers.DnD_monster.server
+```
+
 ### Example Operations
 
 #### Creating a Monster
@@ -167,3 +173,11 @@ Potential improvements:
 - Monster template/preset loading
 - Integration with monster compendiums
 - Legendary actions and resistances tracking
+- Lair actions and regional effects
+- Monster group/encounter management
+
+## Integration with Other Servers
+
+This server can be used alongside:
+- **DnD_dice**: For rolling monster attacks and saving throws
+- **DnD_character**: For managing player characters in combat encounters

@@ -57,6 +57,12 @@ Each character includes:
 python -m src.servers.DnD_character.server
 ```
 
+### Testing with MCP Inspector
+
+```bash
+npx @modelcontextprotocol/inspector python -m src.servers.DnD_character.server
+```
+
 ### Example Operations
 
 #### Creating a Character
@@ -150,3 +156,11 @@ Potential improvements:
 - Magic point consumption tracking
 - Character level and experience tracking
 - Equipment and inventory management
+- Spell slot management
+- Character sheet export/import
+
+## Integration with Other Servers
+
+This server can be used alongside:
+- **DnD_dice**: For rolling character-related checks and attacks
+- **DnD_monster**: For managing NPCs and enemies in combat

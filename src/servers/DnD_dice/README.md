@@ -64,6 +64,174 @@ Simulates throwing dice and returns the result.
 
 **Example:**
 ```json
+{
+  "mcp_type": "dice_event",
+  "action": "roll_dice",
+  "rollId": "attack_001",
+  "notation": "2d6+3",
+  "reason": "Longsword attack"
+}
+```
+
+**Response:**
+```json
+{
+  "rollId": "attack_001",
+  "notation": "2d6+3",
+  "result": "11",
+  "rolledAt": "2025-11-17T10:30:00Z"
+}
+```
+
+With detailed breakdown:
+```
+Rolled 2d6+3 → 11 (rollId=attack_001)
+Details: 2d6: [4, 4] = 8, modifier: +3, subtotal: 11
+```
+
+## Usage
+
+### Running the Server
+
+```bash
+# From project root
+python -m src.servers.DnD_dice.server
+```
+
+### Testing with MCP Inspector
+
+You can test the server using the MCP Inspector tool:
+
+```bash
+npx @modelcontextprotocol/inspector python -m src.servers.DnD_dice.server
+```
+
+### Example Rolls
+
+1. **Simple d20 roll:**
+   ```json
+   {
+     "mcp_type": "dice_event",
+     "action": "roll_dice",
+     "rollId": "initiative_001",
+     "notation": "1d20",
+     "reason": "Initiative roll"
+   }
+   ```
+
+2. **Damage roll with modifier:**
+   ```json
+   {
+     "mcp_type": "dice_event",
+     "action": "roll_dice",
+     "rollId": "damage_001",
+     "notation": "2d6+3",
+     "reason": "Greatsword damage"
+   }
+   ```
+
+3. **Complex multi-dice roll:**
+   ```json
+   {
+     "mcp_type": "dice_event",
+     "action": "roll_dice",
+     "rollId": "custom_001",
+     "notation": "2d3 + 1d6 + 2",
+     "reason": "Custom damage calculation"
+   }
+   ```
+
+## Implementation Details
+
+### Architecture
+
+- **server.py**: MCP server setup and tool routing
+- **tools.py**: Tool definitions and execution functions
+- **dice_roller.py**: Core dice rolling logic and notation parsing
+
+### Dice Rolling Logic
+
+The `dice_roller.py` module provides:
+- `parse_dice_notation()`: Parses dice notation strings
+- `roll_dice()`: Simulates rolling dice
+- `roll_dice_notation()`: Complete roll with detailed breakdown
+
+### Notation Parsing
+
+Supports:
+- Multiple dice groups: `2d6 + 1d4`
+- Modifiers: `1d20+5`, `2d6-2`
+- Whitespace flexibility: `2d6+3` or `2 d 6 + 3`
+
+## D&D Dice Reference
+
+### d4 (4-sided die)
+**Shape:** Tetrahedron (pyramid)
+
+**Common Uses:**
+- Damage for very small weapons (dagger, dart, sling)
+- Minor magical effects or healing
+- Determining random directions
+
+### d6 (6-sided die)
+**Shape:** Cube (standard die)
+
+**Common Uses:**
+- Common weapon damage (shortsword, light crossbow)
+- Spell damage (Fireball uses multiple d6s)
+- Ability score generation (4d6 drop lowest)
+- Hit dice for Wizards
+
+### d8 (8-sided die)
+**Shape:** Octahedron
+
+**Common Uses:**
+- Medium weapon damage (longsword, rapier, shortbow)
+- Hit dice for Rogues, Clerics, Monks
+
+### d10 (10-sided die)
+**Shape:** Pentagonal trapezohedron
+
+**Common Uses:**
+- Large weapon damage (battleaxe, heavy crossbow)
+- Hit dice for Fighters, Paladins, Rangers
+- Percentage rolls (d100): Two d10s for 1-100
+
+### d12 (12-sided die)
+**Shape:** Dodecahedron
+
+**Common Uses:**
+- Very large weapon damage (greataxe)
+- Hit dice for Barbarians
+- Potent monster attacks
+
+### d20 (20-sided die)
+**Shape:** Icosahedron
+
+**The Most Important Die** - Used for almost all checks in D&D
+
+**Common Uses:**
+- Attack rolls (d20 + modifiers vs AC)
+- Ability checks (d20 + modifiers vs DC)
+- Saving throws (d20 + modifiers vs spell DC)
+- Initiative (d20 + Dexterity modifier)
+
+## Roll Notation Examples
+
+- `3d6+2`: Roll three d6, sum results, add 2
+- `1d20+5`: Roll one d20 and add 5
+- `2d8`: Roll two d8 and sum results
+- `1d4+1d6`: Roll one d4 and one d6, sum both
+
+## Future Enhancements
+
+Potential improvements:
+- Advantage/disadvantage rolls (roll twice, take higher/lower)
+- Critical hit handling (double dice on natural 20)
+- Roll history tracking
+- Statistical analysis of rolls
+- Custom dice types (d3, d100)
+
   "mcp_type": "dice_event",
   "action": "roll_dice",
   "rollId": "player_damage_roll_123",
