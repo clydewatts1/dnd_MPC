@@ -20,9 +20,13 @@ from mcp.server import NotificationOptions, Server
 from mcp.server.stdio import stdio_server
 from mcp.types import (
     Tool,
+    Prompt,
+    GetPromptRequest,
+    ReadResourceRequest,
     INVALID_PARAMS,  # noqa: F401
     INTERNAL_ERROR,  # noqa: F401
 )
+from pydantic import AnyUrl
 
 from src.servers.DnD_monster import tools
 
@@ -60,6 +64,35 @@ async def handle_call_tool(name: str, arguments: dict) -> tuple[list[dict], dict
         return tools.execute_delete_monster(arguments)
     else:
         raise ValueError(f"Tool '{name}' not implemented")
+
+
+@server.read_resource()
+async def handle_read_resource(uri: AnyUrl) -> str:
+    """
+    Read a resource.
+    """
+    return f"Hello from DnD_monster resource: {uri}"
+
+@server.get_prompt()
+async def handle_get_prompt(name: str, arguments: dict | None = None) -> GetPromptRequest:
+    """
+    Get a prompt.
+    """
+    return Prompt(
+        name="hello",
+        description="A hello world prompt",
+        arguments=[]
+    )
+
+# Icon and Context handlers are not directly supported by the Server class decorators in this version.
+# @server.icon()
+# async def handle_get_icon(name: str) -> str:
+#     return f"Hello from DnD_monster icon: {name}"
+
+# @server.context()
+# async def handle_get_context() -> dict:
+#     return {"message": "Hello from DnD_monster context"}
+
 
 
 async def main():

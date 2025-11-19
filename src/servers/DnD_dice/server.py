@@ -9,8 +9,6 @@ import asyncio
 # --- Start of path modification ---
 import sys
 import os
-import toon as tn
-
 
 # Add the project root to the Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
@@ -22,8 +20,11 @@ from mcp.server import NotificationOptions, Server
 from mcp.server.stdio import stdio_server
 from mcp.types import (
     Tool,
-    INVALID_PARAMS, # noqa: F401
-    INTERNAL_ERROR, # noqa: F401
+    Prompt,
+    GetPromptRequest,
+    ReadResourceRequest,
+    INVALID_PARAMS,  # noqa: F401
+    INTERNAL_ERROR,  # noqa: F401
 )
 from pydantic import AnyUrl
 
@@ -51,6 +52,35 @@ async def handle_call_tool(name: str, arguments: dict) -> tuple[list[dict], dict
         raise ValueError(f"Unknown tool: {name}")
 
     return tools.execute_throw_dice(arguments)
+
+
+@server.read_resource()
+async def handle_read_resource(uri: AnyUrl) -> str:
+    """
+    Read a resource.
+    """
+    return f"Hello from DnD_dice resource: {uri}"
+
+@server.get_prompt()
+async def handle_get_prompt(name: str, arguments: dict | None = None) -> GetPromptRequest:
+    """
+    Get a prompt.
+    """
+    return Prompt(
+        name="hello",
+        description="A hello world prompt",
+        arguments=[]
+    )
+
+# Icon and Context handlers are not directly supported by the Server class decorators in this version.
+# @server.icon()
+# async def handle_get_icon(name: str) -> str:
+#     return f"Hello from DnD_dice icon: {name}"
+
+# @server.context()
+# async def handle_get_context() -> dict:
+#     return {"message": "Hello from DnD_dice context"}
+
 
 
 
